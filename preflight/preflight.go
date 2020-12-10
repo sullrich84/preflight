@@ -3,16 +3,14 @@ package preflight
 import (
 	"crypto/tls"
 	"github.com/sullrich84/preflight/util/array"
-	"github.com/sullrich84/preflight/util/terminal"
 	"net/http"
 	"strings"
 )
 
 const (
-	AccessControlAllowOrigin      = "Access-Control-Allow-Origin"
-	AccessControlAllowMethods     = "Access-Control-Allow-Methods"
-	AccessControlAllowHeaders     = "Access-Control-Allow-Headers"
-	AccessControlAllowCredentials = "Access-Control-Allow-Credentials"
+	AccessControlAllowOrigin  = "Access-Control-Allow-Origin"
+	AccessControlAllowMethods = "Access-Control-Allow-Methods"
+	AccessControlAllowHeaders = "Access-Control-Allow-Headers"
 )
 
 var client = http.Client{
@@ -21,25 +19,23 @@ var client = http.Client{
 	},
 }
 
-func Preflight(target string, origins []string, methods []string, headers []string) {
-	terminal.PrettyPrintResultsHeader(origins)
-	for _, method := range methods {
+// Preflight will perform the CORS preflight the browser would usually do.
+func Preflight(recipe Recipe, callback func(method string, results []bool)) {
+	for _, method := range recipe.Methods {
 		var results []bool
-		for _, origin := range origins {
-			request := buildRequest(target, origin, method, headers)
+		for _, origin := range recipe.Origins {
+			request := buildRequest(recipe.Target, origin, method, recipe.Headers)
 			response := doRequest(request)
 
 			originAllowed := originAllowed(response, origin)
 			methodAllowed := methodAllowed(response, method)
-			headersAllowed := headersAllowed(response, headers)
-			//credentialsAllowed := credentialsAllowed(response)
+			headersAllowed := headersAllowed(response, recipe.Headers)
 
 			allowed := originAllowed && methodAllowed && headersAllowed
 			results = append(results, allowed)
 		}
-		terminal.PrettyPrintResults(method, results)
+		callback(method, results)
 	}
-	terminal.PrettyPrintResultsFooter(origins)
 }
 
 func originAllowed(response *http.Response, origin string) bool {
@@ -60,8 +56,4 @@ func headersAllowed(response *http.Response, headers []string) bool {
 
 	allowedHeadersArray := strings.Split(allowedHeaders, ",")
 	return array.ContainsAll(allowedHeadersArray, headers)
-}
-
-func credentialsAllowed(response *http.Response) bool {
-	return response.Header.Get(AccessControlAllowCredentials) == "true"
 }

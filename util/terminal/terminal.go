@@ -23,9 +23,9 @@ func PrettyPrintResults(method string, results []bool) {
 	log.Printf(" %-10s %s", method, strings.Join(prettyResults, " "))
 }
 
-func PrettyPrintResultsHeader(origins []string) {
+func PrettyPrintResultsHeader(origins int) {
 	var headlines []string
-	for i := 0; i < len(origins); i++ {
+	for i := 0; i < origins; i++ {
 		headlines = append(headlines, fmt.Sprintf("%-4d", i))
 	}
 
