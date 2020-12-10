@@ -18,7 +18,6 @@ var (
 	origin  []string
 	methods []string
 	header  []string
-	verbose bool
 )
 
 func init() {
@@ -48,7 +47,6 @@ func init() {
 	rootCmd.Flags().StringSliceVarP(&origin, "origin", "O", defaultOrigin, "Origin of the CORS preflight")
 	rootCmd.Flags().StringSliceVarP(&methods, "methods", "M", defaultMethods, "Methods to check in preflight")
 	rootCmd.Flags().StringSliceVarP(&header, "header", "H", defaultHeader, "Populates the Access-Control-Request-Headers for preflight")
-	rootCmd.Flags().BoolVarP(&verbose, "verbose", "V", false, "Enables verbose logging")
 
 	rootCmd.VersionTemplate()
 	rootCmd.Version = fmt.Sprintf("%s (%s)", build.Version, build.Commit)
