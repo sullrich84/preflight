@@ -1,5 +1,8 @@
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
+# github.com/logrusorgru/aurora/v3 v3.0.0
+## explicit
+github.com/logrusorgru/aurora/v3
 # github.com/spf13/cobra v1.1.1
 ## explicit
 github.com/spf13/cobra
