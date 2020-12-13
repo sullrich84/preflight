@@ -2,58 +2,103 @@ package preflight
 
 import (
 	"crypto/tls"
-	"github.com/sullrich84/preflight/util/array"
+	"github.com/thoas/go-funk"
+	"log"
 	"net/http"
 	"strings"
 )
 
-const (
-	AccessControlAllowOrigin  = "Access-Control-Allow-Origin"
-	AccessControlAllowMethods = "Access-Control-Allow-Methods"
-	AccessControlAllowHeaders = "Access-Control-Allow-Headers"
-)
+type PreFlight struct {
+	target string
+	origin string
+	method string
+	header []string
+}
 
+// client is the default http client with https support,
+// preflight will use to make it's pre-flights.
 var client = http.Client{
 	Transport: &http.Transport{
 		TLSClientConfig: &tls.Config{},
 	},
 }
 
-// Preflight will perform the CORS preflight the browser would usually do.
-func Preflight(recipe Recipe, callback func(method string, results []bool)) {
-	for _, method := range recipe.Methods {
-		var results []bool
-		for _, origin := range recipe.Origins {
-			request := buildRequest(recipe.Target, origin, method, recipe.Headers)
-			response := doRequest(request)
+// NewPreFlight initializes a new CORS pre-flight scenario.
+func NewPreFlight(target string, origin string, method string, header []string) (*PreFlight, error) {
+	return &PreFlight{target, origin, method, header}, nil
+}
 
-			originAllowed := originAllowed(response, origin)
-			methodAllowed := methodAllowed(response, method)
-			headersAllowed := headersAllowed(response, recipe.Headers)
-
-			allowed := originAllowed && methodAllowed && headersAllowed
-			results = append(results, allowed)
-		}
-		callback(method, results)
+// PreFly will do the actual CORS pre-flight.
+//
+// An options-request will be send to the target having origin
+// as requester. The resolving response will be evaluated an
+// results in the returned success  state which will either be
+// true (stating a successful pre-flight) or false stating an
+// unsuccessful pre-flight.
+func (preFlight *PreFlight) PreFly() bool {
+	request, reqErr := preFlight.newRequest()
+	if reqErr != nil {
+		log.Println(reqErr)
+		return false
 	}
+
+	response, resErr := client.Do(request)
+	if resErr != nil {
+		log.Println(resErr)
+		return false
+	}
+
+	// Assume failed failed when status is not OK
+	if response.StatusCode != 200 {
+		return false
+	}
+
+	originAllowed := preFlight.originAllowed(response)
+	methodAllowed := preFlight.methodAllowed(response)
+	headersAllowed := preFlight.headersAllowed(response)
+
+	return originAllowed && methodAllowed && headersAllowed
 }
 
-func originAllowed(response *http.Response, origin string) bool {
-	allowedOrigins := response.Header.Get(AccessControlAllowOrigin)
-	return allowedOrigins == "*" || strings.Contains(allowedOrigins, origin)
+// newRequest will initialize a new request containing all relevant CORS headers.
+func (preFlight *PreFlight) newRequest() (*http.Request, error) {
+	req, err := http.NewRequest(http.MethodOptions, preFlight.target, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Origin", preFlight.origin)
+	req.Header.Add("Access-Control-Request-Method", preFlight.method)
+
+	headers := strings.Join(preFlight.header, ",")
+	req.Header.Add("Access-Control-Request-Headers", headers)
+
+	return req, err
 }
 
-func methodAllowed(response *http.Response, origin string) bool {
-	allowedMethods := response.Header.Get(AccessControlAllowMethods)
-	return allowedMethods == "*" || strings.Contains(allowedMethods, origin)
+// originAllowed verifies the origin is listed in the cors response header.
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
+func (preFlight *PreFlight) originAllowed(res *http.Response) bool {
+	origins := res.Header.Get("Access-Control-Allow-Origin")
+	return origins == "*" || strings.Contains(origins, preFlight.origin)
 }
 
-func headersAllowed(response *http.Response, headers []string) bool {
-	allowedHeaders := response.Header.Get(AccessControlAllowHeaders)
-	if allowedHeaders == "*" {
+// originAllowed verifies the method is listed in the cors response header.
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods
+func (preFlight *PreFlight) methodAllowed(res *http.Response) bool {
+	methods := res.Header.Get("Access-Control-Allow-Methods")
+	return methods == "*" || strings.Contains(methods, preFlight.method)
+}
+
+// headersAllowed verifies the headers are listed in the cors response header.
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers
+func (preFlight *PreFlight) headersAllowed(res *http.Response) bool {
+	headers := res.Header.Get("Access-Control-Allow-Headers")
+	if headers == "*" {
 		return true
 	}
 
-	allowedHeadersArray := strings.Split(allowedHeaders, ",")
-	return array.ContainsAll(allowedHeadersArray, headers)
+	allowedHeadersArray := strings.Split(headers, ",")
+	intersect := funk.IntersectString(preFlight.header, allowedHeadersArray)
+	return len(intersect) > 0
 }
