@@ -1,90 +1,57 @@
 package terminal
 
 import (
+	"fmt"
 	"log"
-	"os"
 	"strings"
-	"text/template"
 )
 
 type PrettyPrinter struct {
-	templates templates
+	origins []string
+	methods []string
+	results map[string]map[string]string
 }
 
-type templates struct {
-	headline *template.Template
-	window   *template.Template
-}
+func NewPrettyPrinter(origins []string, methods []string) *PrettyPrinter {
+	oLen := len(origins)
+	mLen := len(methods)
 
-func NewPrettyPrinter() *PrettyPrinter {
-	return &PrettyPrinter{
-		templates: templates{
-			headline: initHeadline(),
-			window:   initWindow(),
-		},
-	}
-}
-
-func initHeadline() *template.Template {
-	tmpl := template.New("headline")
-
-	tmpl.Funcs(template.FuncMap{"StringsJoin": strings.Join})
-
-	headlineTemplate, headTmplErr := tmpl.Parse(headline)
-	if headTmplErr != nil {
-		log.Fatal(headTmplErr)
+	results := make(map[string]map[string]string, mLen)
+	for _, method := range methods {
+		results[method] = make(map[string]string, oLen)
+		for _, origin := range origins {
+			results[method][origin] = "FOBA"
+		}
 	}
 
-	return headlineTemplate
+	return &PrettyPrinter{origins, methods, results}
 }
 
-type Headline struct {
-	Target string
-	Origin []string
-	Header []string
+func (prettyPrinter *PrettyPrinter) PrintHeadline(target string, origins []string, methods []string) {
+	log.Println()
+	log.Printf(" Target: %s", target)
+	log.Printf(" Origin: %s", strings.Join(origins, ", "))
+	log.Printf(" Method: %s", strings.Join(methods, ", "))
+	log.Println()
 }
 
-func (prettyPrinter *PrettyPrinter) PrintHeadline(headline *Headline) {
-	err := prettyPrinter.templates.headline.Execute(os.Stdout, headline)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-var headline = `
- Target: {{ .Target }}
- Origin: {{ StringsJoin .Origin ", " }}
- Header: {{ StringsJoin .Header ", " }}
-`
-
-func initWindow() *template.Template {
-	tmpl := template.New("window")
-
-	tmpl.Funcs(template.FuncMap{"PrintOutcome": func(origins []string, method string) string {
-		return strings.Join(origins, ", ")
-	}})
-
-	windowTemplate, winTmplErr := tmpl.Parse(window)
-	if winTmplErr != nil {
-		log.Fatal(winTmplErr)
+func (prettyPrinter *PrettyPrinter) PrintWindow() {
+	var columnWidth = make(map[string]int, len(prettyPrinter.origins))
+	for _, origin := range prettyPrinter.origins {
+		columnWidth[origin] = len(origin)
 	}
 
-	return windowTemplate
-}
+	log.Printf(" %-10s %s", " ", strings.Join(prettyPrinter.origins, " "))
 
-type Window struct {
-	Origins []string
-	Methods []string
-}
+	for _, method := range prettyPrinter.methods {
+		var pOrigins []string
+		for _, origin := range prettyPrinter.origins {
+			res := prettyPrinter.results[method][origin]
+			cWidth := columnWidth[origin]
+			format := fmt.Sprintf("%%-%ds", cWidth)
+			pOrigins = append(pOrigins, fmt.Sprintf(format, res))
+		}
 
-func (prettyPrinter *PrettyPrinter) PrintWindow(window *Window) {
-	err := prettyPrinter.templates.window.Execute(os.Stdout, window)
-	if err != nil {
-		log.Fatal(err)
+		log.Printf(" %-10s %s", method, strings.Join(pOrigins, " "))
 	}
 }
-
-var window = `
-{{ range $mIdx, $m := .Methods }} {{ $m }} {{ PrintOutcome $.Origins $m }}
-{{end}}
-`
