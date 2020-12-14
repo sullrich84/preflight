@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/sullrich84/preflight/app/build"
 	"github.com/sullrich84/preflight/preflight"
-	"github.com/sullrich84/preflight/util/terminal"
+	"github.com/sullrich84/preflight/terminal"
 	"log"
 	"net/http"
 	"os"
@@ -76,13 +76,13 @@ func init() {
 func run(_ *cobra.Command, _ []string) {
 	prettyPrinter := terminal.NewPrettyPrinter(origins, methods)
 	prettyPrinter.PrintHeadline(target, origins, headers)
-	prettyPrinter.PrintWindow()
+
+	prettyPrinter.PrintResultTable()
 
 	for _, origin := range origins {
 		for _, method := range methods {
 			flight, _ := preflight.NewPreFlight(target, origin, method, headers)
-			terminal.NewResult(origin, method, flight.PreFly())
-
+			flight.PreFly()
 		}
 	}
 }
