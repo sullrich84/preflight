@@ -54,7 +54,7 @@ func init() {
 	log.SetFlags(0)
 
 	rootCmd.Flags().StringVarP(
-		&target, "target", "T", "https://api.sandbox.wettkampfdb.de",
+		&target, "target", "T", "https://api.github.com",
 		"Target of the CORS preflight")
 
 	rootCmd.Flags().StringSliceVarP(

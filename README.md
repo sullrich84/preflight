@@ -1,2 +1,2 @@
-# preflight
-CORS Testing Tool
+
+# PreFlight - The CORS testing tool in your terminal
