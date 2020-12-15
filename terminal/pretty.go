@@ -3,6 +3,8 @@ package terminal
 import (
 	"fmt"
 	"github.com/ahmetalpbalkan/go-cursor"
+	"github.com/logrusorgru/aurora/v3"
+	"sort"
 	"strings"
 )
 
@@ -20,42 +22,68 @@ func NewPrettyPrinter(origins []string, methods []string) *PrettyPrinter {
 	// Hide the ansi cursor
 	fmt.Printf(cursor.Hide())
 
+	// Sort methods
+	sort.Strings(methods)
+
 	results := make(map[string]map[string]string, mLen)
 	for _, method := range methods {
 		results[method] = make(map[string]string, oLen)
 		for _, origin := range origins {
-			results[method][origin] = "CORS"
+			results[method][origin] = renderPending()
 		}
 	}
 
 	return &PrettyPrinter{
+		origins:     origins,
+		methods:     methods,
 		results:     results,
 		tabRendered: false,
 	}
 }
 
-func (prettyPrinter *PrettyPrinter) PrintHeadline(target string, origins []string, methods []string) {
+func (prettyPrinter *PrettyPrinter) PrintHeadline(target string, origins []string, header []string) {
 	fmt.Println()
 	fmt.Printf(" Target: %s\n", target)
 	fmt.Printf(" Origin: %s\n", strings.Join(origins, ", "))
-	fmt.Printf(" Method: %s\n", strings.Join(methods, ", "))
+	fmt.Printf(" Header: %s\n", strings.Join(header, ", "))
 	fmt.Println()
 }
 
 func (prettyPrinter *PrettyPrinter) PrintResultTable() {
 	if prettyPrinter.tabRendered {
 		// Move cursor to beginning of previous table
-		fmt.Printf(cursor.MoveUp(len(prettyPrinter.results)))
+		fmt.Printf(cursor.MoveUp(len(prettyPrinter.methods)))
 		fmt.Printf("\r")
 	} else {
 		prettyPrinter.tabRendered = true
 	}
 
-	for method, origins := range prettyPrinter.results {
+	for _, method := range prettyPrinter.methods {
 		fmt.Printf(" %-10s", method)
-		for _, result := range origins {
-			fmt.Printf(" %-4s", result)
+		for _, origin := range prettyPrinter.origins {
+			fmt.Printf(" %-4s", prettyPrinter.results[method][origin])
 		}
 		fmt.Printf("\n")
 	}
+}
+
+func (prettyPrinter *PrettyPrinter) Update(origin string, method string, succeeded bool) {
+	if succeeded {
+		prettyPrinter.results[method][origin] = renderPass()
+	} else {
+		prettyPrinter.results[method][origin] = renderFail()
+	}
+	prettyPrinter.PrintResultTable()
+}
+
+func renderPass() string {
+	return aurora.BrightCyan("PASS").Bold().String()
+}
+
+func renderFail() string {
+	return aurora.Magenta("FAIL").Bold().String()
+}
+
+func renderPending() string {
+	return aurora.Gray(7, "WAIT").String()
 }

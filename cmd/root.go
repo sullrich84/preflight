@@ -78,11 +78,13 @@ func run(_ *cobra.Command, _ []string) {
 	prettyPrinter.PrintHeadline(target, origins, headers)
 
 	prettyPrinter.PrintResultTable()
+	prettyPrinter.PrintResultTable()
+	prettyPrinter.PrintResultTable()
 
 	for _, origin := range origins {
 		for _, method := range methods {
 			flight, _ := preflight.NewPreFlight(target, origin, method, headers)
-			flight.PreFly()
+			prettyPrinter.Update(origin, method, flight.PreFly())
 		}
 	}
 }
