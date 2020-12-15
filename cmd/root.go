@@ -74,12 +74,8 @@ func init() {
 }
 
 func run(_ *cobra.Command, _ []string) {
-	prettyPrinter := terminal.NewPrettyPrinter(origins, methods)
-	prettyPrinter.PrintHeadline(target, origins, headers)
-
-	prettyPrinter.PrintResultTable()
-	prettyPrinter.PrintResultTable()
-	prettyPrinter.PrintResultTable()
+	prettyPrinter := terminal.NewPrettyPrinter(target, origins, methods, headers)
+	prettyPrinter.Render()
 
 	for _, origin := range origins {
 		for _, method := range methods {
