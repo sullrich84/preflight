@@ -24,6 +24,6 @@ the binaries in [GitHubs release section](https://github.com/sullrich84/prefligh
 # Feedback
 
 This is an open source project and your feedback is essential. If you discover 
-bugs or other inconsitencies please file a [new issue](https://github.com/sullrich84/preflight/issues).
+bugs or other inconsistencies please file a [new issue](https://github.com/sullrich84/preflight/issues).
 If you want to share your ideas on how to improve **preflight** we're happy to hear
 from you in the [discussions section](https://github.com/sullrich84/preflight/discussions).
