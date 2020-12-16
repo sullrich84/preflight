@@ -32,7 +32,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
           file: dist/preflight-darwin
-          asset_name: preflight-${{ env.VERSION }}
+          asset_name: preflight-darwin
           tag: ${{ github.ref }}
           overwrite: true
 
@@ -41,7 +41,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
           file: dist/preflight-linux
-          asset_name: preflight-${{ env.VERSION }}
+          asset_name: preflight-linux
           tag: ${{ github.ref }}
           overwrite: true
 
@@ -50,6 +50,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
           file: dist/preflight-windows.exe
-          asset_name: preflight-${{ env.VERSION }}
+          asset_name: preflight-windows.exe
           tag: ${{ github.ref }}
           overwrite: true
