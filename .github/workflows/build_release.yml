@@ -37,8 +37,8 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: dist/preflight-darwin-${VERSION}
-          asset_name: preflight-${VERSION}
+          file: dist/preflight-darwin-$VERSION
+          asset_name: preflight-$VERSION
           tag: ${{ github.ref }}
           overwrite: true
         env:
