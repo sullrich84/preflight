@@ -2,7 +2,7 @@ name: Build Release
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   build:
@@ -30,14 +30,14 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: preflight $(git describe --abbrev=0 --tags) artifacts
+          name: preflight binaries
           path: dist/
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: dist/
+          file: dist/preflight-darwin-$(git describe --abbrev=0 --tags)
           asset_name: preflight-$(git describe --abbrev=0 --tags)
           tag: ${{ github.ref }}
           overwrite: true
