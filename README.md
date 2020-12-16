@@ -7,7 +7,7 @@
 **preflight** is a *Cross-Origin Resource Sharing* testing tool for your terminal. 
 *Cross-Origin Resource Sharing* is a relevant security mechanism every web 
 developer has to face at a certain point in their projects. **preflight** is here 
-to help - it was created to support you in this process by speeding up the 
+to help — it was created to support you in this process by speeding up the 
 configuration and testing.
 
 ### How does it work?
