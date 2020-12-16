@@ -8,3 +8,5 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/thoas/go-funk v0.7.0
 )
+
+replace github.com/sullrich84/preflight/app => ./app

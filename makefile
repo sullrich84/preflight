@@ -1,4 +1,4 @@
-VERSION := 1.0.0
+VERSION := 0.0.0
 COMMIT  := $(shell git rev-parse --short HEAD)
 
 VERSION_INJECT := -X github.com/sullrich84/preflight/app/build.Version=$(VERSION)
