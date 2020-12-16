@@ -9,6 +9,10 @@ require (
 	github.com/thoas/go-funk v0.7.0
 )
 
-replace github.com/sullrich84/preflight/app => ./app
+replace github.com/sullrich84/preflight/app/build => ./app/build
 
-replace github.com/sullrich84/preflight => ./
+replace github.com/sullrich84/preflight/cmd => ./cmd
+
+replace github.com/sullrich84/preflight/preflight => ./preflight
+
+replace github.com/sullrich84/preflight/terminal => ./terminal
