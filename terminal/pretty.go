@@ -9,8 +9,13 @@ import (
 	"strings"
 )
 
+// pass is the themed output for successful responses
 var pass = aurora.BrightCyan("PASS").Bold().String()
+
+// fail is the themed output for failed responses
 var fail = aurora.Magenta("FAIL").Bold().String()
+
+// pending is the themed response for ongoing requests
 var pending = aurora.Gray(7, "WAIT").String()
 
 type PrettyPrinter struct {
@@ -59,9 +64,15 @@ func (prettyPrinter *PrettyPrinter) Render() {
 	prettyPrinter.printResultTable()
 }
 
+// Summary renders the outcome of the preflights to the terminal.
+func (prettyPrinter *PrettyPrinter) Summary() {
+	fmt.Println()
+}
+
 // printHeadline prints a brief argument overview.
 func (prettyPrinter *PrettyPrinter) printHeadline() {
-	fmt.Printf(" PreFlight %s \n", build.Version)
+	fmt.Println()
+	fmt.Printf(" %s %s\n", aurora.Bold("PreFlight"), build.Version)
 	fmt.Println()
 	fmt.Printf(" Target: %s\n", prettyPrinter.target)
 	fmt.Printf(" Origin: %s\n", strings.Join(prettyPrinter.origins, ", "))

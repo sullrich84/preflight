@@ -15,8 +15,8 @@ type PreFlight struct {
 	header []string
 }
 
-// client is the default http client with https support,
-// preflight will use to make it's pre-flights.
+// client is the default http client with https support, preflight will use to
+// make it's pre-flights.
 var client = http.Client{
 	Transport: &http.Transport{
 		TLSClientConfig: &tls.Config{},
@@ -30,11 +30,10 @@ func NewPreFlight(target string, origin string, method string, header []string) 
 
 // PreFly will do the actual CORS pre-flight.
 //
-// An options-request will be send to the target having origin
-// as requester. The resolving response will be evaluated an
-// results in the returned success  state which will either be
-// true (stating a successful pre-flight) or false stating an
-// unsuccessful pre-flight.
+// An options-request will be send to the target having origin as requester.
+// The resolving response will be evaluated an results in the returned success
+// state which will either be true (stating a successful pre-flight) or false
+// stating an unsuccessful pre-flight.
 func (preFlight *PreFlight) PreFly() bool {
 	request, reqErr := preFlight.newRequest()
 	if reqErr != nil {

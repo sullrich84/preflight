@@ -54,7 +54,7 @@ func init() {
 	log.SetFlags(0)
 
 	rootCmd.Flags().StringVarP(
-		&target, "target", "T", "https://api.github.com",
+		&target, "target", "T", "https://api.sandbox.wettkampfdb.de",
 		"Target of the CORS preflight")
 
 	rootCmd.Flags().StringSliceVarP(
@@ -83,6 +83,8 @@ func run(_ *cobra.Command, _ []string) {
 			prettyPrinter.Update(origin, method, flight.PreFly())
 		}
 	}
+
+	prettyPrinter.Summary()
 }
 
 // Execute will run the default command interpreter.
