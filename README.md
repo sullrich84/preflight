@@ -1,6 +1,4 @@
-<div style="text-align:center">
-<img src="https://raw.githubusercontent.com/sullrich84/preflight/master/assets/logo.svg?sanitize=true" width="400" />
-</div>
+<img align="center" src="https://raw.githubusercontent.com/sullrich84/preflight/master/assets/logo.svg?sanitize=true" width="400" />
 
 # preflight
 
