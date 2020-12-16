@@ -10,3 +10,5 @@ require (
 )
 
 replace github.com/sullrich84/preflight/app => ./app
+
+replace github.com/sullrich84/preflight => ./
