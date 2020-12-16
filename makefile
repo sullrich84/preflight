@@ -1,8 +1,8 @@
 VERSION := 0.0.0
 COMMIT  := $(shell git rev-parse --short HEAD)
 
-VERSION_INJECT := -X github.com/sullrich84/preflight/app/build.Version=$(VERSION)
-COMMIT_INJECT  := -X github.com/sullrich84/preflight/app/build.Commit=$(COMMIT)
+VERSION_INJECT := -X github.com/sullrich84/preflight/app.Version=$(VERSION)
+COMMIT_INJECT  := -X github.com/sullrich84/preflight/app.Commit=$(COMMIT)
 LDFLAGS 	   := "$(VERSION_INJECT) $(COMMIT_INJECT)"
 
 build:

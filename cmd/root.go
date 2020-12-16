@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/sullrich84/preflight/app/build"
+	"github.com/sullrich84/preflight/app"
 	"github.com/sullrich84/preflight/preflight"
 	"github.com/sullrich84/preflight/terminal"
 	"log"
@@ -70,7 +70,7 @@ func init() {
 		"Populates the Access-Control-Request-Headers for preflight")
 
 	rootCmd.VersionTemplate()
-	rootCmd.Version = fmt.Sprintf("%s (%s)", build.Version, build.Commit)
+	rootCmd.Version = fmt.Sprintf("%s (%s)", app.Version, app.Commit)
 }
 
 func run(_ *cobra.Command, _ []string) {

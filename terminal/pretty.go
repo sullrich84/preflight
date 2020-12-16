@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/ahmetalpbalkan/go-cursor"
 	"github.com/logrusorgru/aurora/v3"
-	"github.com/sullrich84/preflight/app/build"
+	"github.com/sullrich84/preflight/app"
 	"sort"
 	"strings"
 )
@@ -72,7 +72,7 @@ func (prettyPrinter *PrettyPrinter) Summary() {
 // printHeadline prints a brief argument overview.
 func (prettyPrinter *PrettyPrinter) printHeadline() {
 	fmt.Println()
-	fmt.Printf(" %s %s\n", aurora.Bold("PreFlight"), build.Version)
+	fmt.Printf(" %s %s\n", aurora.Bold("PreFlight"), app.Version)
 	fmt.Println()
 	fmt.Printf(" Target: %s\n", prettyPrinter.target)
 	fmt.Printf(" Origin: %s\n", strings.Join(prettyPrinter.origins, ", "))
