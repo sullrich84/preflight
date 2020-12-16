@@ -1,8 +1,11 @@
-name: Build Release
+name: Build Current
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - '**'
 
 jobs:
   build:
@@ -22,7 +25,7 @@ jobs:
           go mod vendor
 
       - name: Build artifacts
-        run: make VERSION=$(git describe --abbrev=0 --tags)
+        run: make VERSION=$(git rev-parse --short HEAD)
         env:
           GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -30,5 +33,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: preflight $(git describe --abbrev=0 --tags) artifacts
+          name: preflight $(git rev-parse --short HEAD) artifacts
           path: dist/
