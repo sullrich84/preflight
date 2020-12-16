@@ -27,19 +27,29 @@ jobs:
           GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: preflight binaries
-          path: dist/
-
-      - name: Upload binaries to release
+      - name: Upload MacOSX binary
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: dist/preflight-darwin-${{ env.VERSION }}
+          file: dist/preflight-darwin
           asset_name: preflight-${{ env.VERSION }}
           tag: ${{ github.ref }}
           overwrite: true
-        env:
-          VERSION: $(git describe --abbrev=0 --tags)
+
+      - name: Upload Linux binary
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: dist/preflight-linux
+          asset_name: preflight-${{ env.VERSION }}
+          tag: ${{ github.ref }}
+          overwrite: true
+
+      - name: Upload Windows binary
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: dist/preflight-windows.exe
+          asset_name: preflight-${{ env.VERSION }}
+          tag: ${{ github.ref }}
+          overwrite: true
