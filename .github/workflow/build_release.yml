@@ -1,0 +1,23 @@
+name: Build Release
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Build artifacts
+        run: make VERSION=$(git describe --abbrev=0 --tags)
+        env:
+          GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: preflight $(git describe --abbrev=0 --tags) artifacts
+          path: dist/
