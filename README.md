@@ -12,11 +12,12 @@ configuration and testing.
 
 ### How does it work?
 
-**preflight** will emulate the browsers *preflight* from your terminal. Just 
+**preflight** will emulate the browsers *preflight* requests in your terminal. Just 
 provide the `target` you want to pre-fly, one or more `origins` the request will 
-be made from and **preflight** handles the rest.  
+be made from and **preflight** will tell you if configured your *Cross-Origin 
+Resource Sharing Response Headers* correctly.
 
-# How can I get preflight?
+### How can I get preflight?
 
 **preflight** is available for **MacOSX**, **Linux** and **Windows**. You can find 
 the binaries in [GitHubs release section](https://github.com/sullrich84/preflight/releases).
