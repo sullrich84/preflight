@@ -20,7 +20,7 @@ Resource Sharing Response Headers* correctly.
 
 ### How can I get preflight?
 
-*preflight* is available for MacOSX, *Linux and Windows. You can find 
+*preflight* is available for MacOSX, Linux and Windows. You can find 
 the binaries in [GitHubs release section](https://github.com/sullrich84/preflight/releases).
 
 # Feedback
