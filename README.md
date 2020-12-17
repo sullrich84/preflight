@@ -1,4 +1,4 @@
-<img align="center" src="https://raw.githubusercontent.com/sullrich84/preflight/master/assets/logo.svg?sanitize=true" width="400" />
+![preflight](https://raw.githubusercontent.com/sullrich84/preflight/master/assets/logo.svg)
 
 # preflight
 
