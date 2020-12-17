@@ -3,6 +3,7 @@
 # preflight
 
 ![Build Release](https://github.com/sullrich84/preflight/workflows/Build%20Release/badge.svg)
+![Go Report](https://goreportcard.com/badge/github.com/sullrich84/preflight)
 
 *preflight* is a *Cross-Origin Resource Sharing* testing tool for your terminal. 
 *Cross-Origin Resource Sharing* is a relevant security mechanism every web 
