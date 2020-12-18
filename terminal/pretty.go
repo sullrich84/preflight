@@ -48,13 +48,16 @@ func NewPrettyPrinter(target string, origins []string, methods []string, header 
 		}
 	}
 
+	// Initialize new writer that will update the prompts
+	writer := uilive.New()
+
 	return &PrettyPrinter{
 		target:  target,
 		origins: origins,
 		methods: methods,
 		header:  header,
 		results: results,
-		writer:  uilive.New(),
+		writer:  writer,
 	}
 }
 
