@@ -3,6 +3,7 @@ package terminal
 import (
 	"fmt"
 	"github.com/ahmetalpbalkan/go-cursor"
+	"github.com/gosuri/uilive"
 	"github.com/logrusorgru/aurora/v3"
 	"github.com/sullrich84/preflight/app"
 	"sort"
@@ -19,12 +20,12 @@ var fail = aurora.Magenta("FAIL").Bold().String()
 var pending = aurora.Gray(7, "WAIT").String()
 
 type PrettyPrinter struct {
-	target      string
-	origins     []string
-	methods     []string
-	header      []string
-	results     map[string]map[string]string
-	tabRendered bool
+	target  string
+	origins []string
+	methods []string
+	header  []string
+	results map[string]map[string]string
+	writer  *uilive.Writer
 }
 
 // NewPrettyPrinter will initialize a new NewPrettyPrinter that will be used to
@@ -48,24 +49,26 @@ func NewPrettyPrinter(target string, origins []string, methods []string, header 
 	}
 
 	return &PrettyPrinter{
-		target:      target,
-		origins:     origins,
-		methods:     methods,
-		header:      header,
-		results:     results,
-		tabRendered: false,
+		target:  target,
+		origins: origins,
+		methods: methods,
+		header:  header,
+		results: results,
+		writer:  uilive.New(),
 	}
 }
 
-// Render renders the terminal output. Output will show a brief argument
+// Start renders the terminal output. Output will show a brief argument
 // overview and the result table of all CORS preflights.
-func (prettyPrinter *PrettyPrinter) Render() {
+func (prettyPrinter *PrettyPrinter) Start() {
 	prettyPrinter.printHeadline()
+	prettyPrinter.writer.Start()
 	prettyPrinter.printResultTable()
 }
 
-// Summary renders the outcome of the preflights to the terminal.
-func (prettyPrinter *PrettyPrinter) Summary() {
+// Stop renders the outcome of the preflights to the terminal.
+func (prettyPrinter *PrettyPrinter) Stop() {
+	prettyPrinter.writer.Stop()
 	fmt.Println()
 }
 
@@ -80,24 +83,6 @@ func (prettyPrinter *PrettyPrinter) printHeadline() {
 	fmt.Println()
 }
 
-// printResultTable prints the result table in pending state.
-func (prettyPrinter *PrettyPrinter) printResultTable() {
-	for _, method := range prettyPrinter.methods {
-		fmt.Printf(" %-10s", method)
-		for _, origin := range prettyPrinter.origins {
-			fmt.Printf(" %-4s", prettyPrinter.results[method][origin])
-		}
-		fmt.Println()
-	}
-}
-
-// resetCursor sets the cursor to the start coordinates of the previously
-// printed result table.
-func (prettyPrinter *PrettyPrinter) resetCursor() {
-	fmt.Printf(cursor.MoveUp(len(prettyPrinter.methods)))
-	fmt.Printf("\r")
-}
-
 // Update updates the CORS test cell in the result table.
 func (prettyPrinter *PrettyPrinter) Update(origin string, method string, success bool) {
 	if success {
@@ -106,6 +91,24 @@ func (prettyPrinter *PrettyPrinter) Update(origin string, method string, success
 		prettyPrinter.results[method][origin] = fail
 	}
 
-	prettyPrinter.resetCursor()
 	prettyPrinter.printResultTable()
+}
+
+// printResultTable prints the result table in pending state.
+func (prettyPrinter *PrettyPrinter) printResultTable() {
+	for _, method := range prettyPrinter.methods {
+		prettyPrinter.log(" %-10s", method)
+		for _, origin := range prettyPrinter.origins {
+			prettyPrinter.log(" %-4s", prettyPrinter.results[method][origin])
+		}
+		prettyPrinter.log("\n")
+	}
+}
+
+// log prints given string to console.
+func (prettyPrinter *PrettyPrinter) log(format string, values ...interface{}) {
+	_, err := fmt.Fprintf(prettyPrinter.writer, format, values...)
+	if err != nil {
+		panic(err)
+	}
 }

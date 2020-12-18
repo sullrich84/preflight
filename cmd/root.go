@@ -75,7 +75,7 @@ func init() {
 
 func run(_ *cobra.Command, _ []string) {
 	prettyPrinter := terminal.NewPrettyPrinter(target, origins, methods, headers)
-	prettyPrinter.Render()
+	prettyPrinter.Start()
 
 	for _, origin := range origins {
 		for _, method := range methods {
@@ -84,7 +84,7 @@ func run(_ *cobra.Command, _ []string) {
 		}
 	}
 
-	prettyPrinter.Summary()
+	prettyPrinter.Stop()
 }
 
 // Execute will run the default command interpreter.
